@@ -40,11 +40,7 @@ export const Autocomplete: React.FC<Props> = ({
     }
   }, [selectedPerson]);
 
-  const applyQuery = useRef(
-    debounce((value: string) => {
-      setAppliedQuery(value);
-    }, delay),
-  ).current;
+  const applyQuery = useMemo(() => debounce(setAppliedQuery, delay), [delay]);
 
   useEffect(() => {
     return () => {
@@ -59,21 +55,20 @@ export const Autocomplete: React.FC<Props> = ({
 
   const onQueryChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const rawValue = event.target.value;
-      const trimmedValue = rawValue.trim().toLowerCase();
+      const value = event.target.value.trim().toLowerCase();
 
-      setQuery(rawValue);
+      setQuery(event.target.value);
       setIsFocused(true);
 
       if (selectedPerson) {
         clearPersonSelection();
       }
 
-      if (trimmedValue === '') {
+      if (value === '') {
         applyQuery.cancel();
-        setAppliedQuery('');
+        setQuery('');
       } else {
-        applyQuery(trimmedValue);
+        applyQuery(value);
       }
     },
     [selectedPerson, clearPersonSelection, applyQuery],
