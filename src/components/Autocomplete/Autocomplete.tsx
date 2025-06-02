@@ -40,11 +40,11 @@ export const Autocomplete: React.FC<Props> = ({
     }
   }, [selectedPerson]);
 
-  const applyQuery = useMemo(() => {
-    return debounce((value: string) => {
+  const applyQuery = useRef(
+    debounce((value: string) => {
       setAppliedQuery(value);
-    }, delay);
-  }, [delay]);
+    }, delay),
+  ).current;
 
   useEffect(() => {
     return () => {
